@@ -1,0 +1,7 @@
+*.o
+*.a
+*.out
+*.dSYM
+.vscode
+.DS_Store
+tests
