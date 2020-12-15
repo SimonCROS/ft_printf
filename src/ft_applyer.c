@@ -6,7 +6,7 @@
 /*   By: scros <scros@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/13 15:14:52 by scros             #+#    #+#             */
-/*   Updated: 2020/12/15 15:45:01 by scros            ###   ########lyon.fr   */
+/*   Updated: 2020/12/15 16:49:26 by scros            ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,17 +66,14 @@ static int	pointer_type(t_modifiers para, void *p)
 	char			str[20];
 	uint64_t		addr;
 
+	if (!p)
+		return (string_type(para, "0x0"));
 	i = 1;
 	str_i = 2;
 	addr = (uint64_t)p;
 	ft_strlcpy(str, "0x", 3);
-	while (i <= 16)
-	{
-		if (!((addr >> 4 * (16 - i)) % 16))
-			i++;
-		else
-			break ;
-	}
+	while (i <= 16 && !((addr >> 4 * (16 - i)) % 16))
+		i++;
 	while (i <= 16)
 	{
 		c = (addr >> 4 * (16 - i++)) % 16;
