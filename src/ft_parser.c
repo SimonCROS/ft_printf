@@ -6,32 +6,18 @@
 /*   By: scros <scros@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/12 12:59:23 by scros             #+#    #+#             */
-/*   Updated: 2020/12/13 15:57:42 by scros            ###   ########lyon.fr   */
+/*   Updated: 2020/12/15 13:30:57 by scros            ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_printf.h"
-
-static t_modifiers	*new_modifiers(void)
-{
-	t_modifiers *modifiers;
-
-	if (!(modifiers = calloc(1, sizeof(t_modifiers))))
-		return (NULL);
-	if (!(modifiers->flags = calloc(1, sizeof(t_flags))))
-	{
-		free(modifiers);
-		return (NULL);
-	}
-	return (modifiers);
-}
 
 static void			read_flags(char **str, t_flags *flags)
 {
 	int pos;
 
 	while (**str && (pos = ft_strindex_of("-+ #0", **str)) != -1)
-		*((char*)flags + pos) = !!*((*str)++);
+		*((char*)flags + pos) = *((*str)++);
 }
 
 static void			read_char(char **str, char *dest, char *possibilities)
@@ -40,33 +26,34 @@ static void			read_char(char **str, char *dest, char *possibilities)
 		*dest = *((*str)++);
 }
 
-static void			read_number(char **str, int *dest, va_list args)
+static int			read_number(char **str, int *dest, va_list args)
 {
 	int len;
 
 	if (**str == '*' && (len = 1))
-		*dest = ft_max(-1, va_arg(args, int));
+		*dest = va_arg(args, int);
 	else
 		*dest = ft_atoi_len(*str, &len);
 	(*str) += len;
+	return (*(*str - len) == '*');
 }
 
-int					ft_parser(const char *string, va_list args)
+int					ft_parser(char **string, va_list args)
 {
-	t_modifiers *modifiers;
-	char		*cpy;
+	t_modifiers modifiers;
 
-	cpy = (char *)string;
-	if (!(modifiers = new_modifiers()))
-		return (-1);
-	read_flags(&cpy, modifiers->flags);
-	read_number(&cpy, &(modifiers->min_width), args);
-	if (*cpy == '.' && *(++cpy))
-		read_number(&cpy, &(modifiers->precision), args);
-	read_char(&cpy, &(modifiers->read_as), "FNhlL");
-	read_char(&cpy, &(modifiers->type), "diouxXfFeEgGaAcsb%");
-	ft_applyer(modifiers, args);
-	free(modifiers->flags);
-	free(modifiers);
-	return (cpy - string);
+	ft_bzero(&modifiers, sizeof(modifiers));
+	read_flags(string, &(modifiers.flags));
+	read_number(string, &(modifiers.min_width), args);
+	if (modifiers.min_width < 0)
+	{
+		modifiers.flags.left_align = '-';
+		modifiers.min_width *= -1;
+	}
+	if (**string == '.' && *(++(*string)))
+		if (!read_number(string, &(modifiers.prec), args) || modifiers.prec > 0)
+			modifiers.has_prec = 1;
+	read_char(string, &(modifiers.read_as), "FNhlL");
+	read_char(string, &(modifiers.type), "cspdiuxX%");
+	return (ft_applyer(modifiers, args));
 }
