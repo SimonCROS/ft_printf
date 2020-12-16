@@ -6,7 +6,7 @@
 /*   By: scros <scros@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/13 15:14:52 by scros             #+#    #+#             */
-/*   Updated: 2020/12/15 18:41:45 by scros            ###   ########lyon.fr   */
+/*   Updated: 2020/12/16 12:30:36 by scros            ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,16 @@ static int	final_str_len(t_modifiers para, char *s)
 
 static int	prec_int_len(t_modifiers para, int i)
 {
-	return (ft_max(ft_intlen(i), ft_abs(para.prec)));
+	int prec;
+
+	prec = 0;
+	if (para.has_prec)
+	{
+		prec = ft_abs(para.prec);
+		if (i < 0)
+			prec++;
+	}
+	return (ft_max(ft_intlen(i), prec));
 }
 
 static int	char_type(t_modifiers para, char c)
@@ -66,19 +75,34 @@ static int	string_type(t_modifiers para, char *s)
 static int	int_type(t_modifiers para, int i)
 {
 	int		len;
+	int		shift;
 	char	i_str[ft_intlen(i)];
 	char	str[prec_int_len(para, i) + 1];
 
+	shift = i < 0 && (para.flags.zero) && !para.has_prec;
+	if (para.has_prec && !para.prec && i == 0)
+	{
+		para.flags.zero = 0;
+		return (string_type(para, "") + shift);
+	}
 	len = sizeof(str) - 1;
 	str[len] = 0;
-	ft_memset(&str, ft_ternary(para.prec < 0, ' ', '0'), len);
+	ft_memset(&str, ft_ternary(para.has_prec, '0', ' '), len);
 	ft_itoa_to(i, i_str);
-	ft_strinsert(str, i_str, ft_ternary(ft_max(para.flags.left_align,
-		para.prec < 0), 0, len - sizeof(i_str)));
+	ft_strinsert(str, i_str + (i < 0), ft_ternary(
+		para.prec < 0, (i < 0), len - sizeof(i_str) + (i < 0)));
 	if (para.has_prec)
 		para.flags.zero = 0;
 	para.has_prec = 0;
-	return (string_type(para, str));
+	if (shift)
+	{
+		write(1, "-", 1);
+		if (para.min_width)
+			para.min_width--;
+	}
+	else if (i < 0)
+		str[0] = '-';
+	return (string_type(para, str + shift) + shift);
 }
 
 static int	pointer_type(t_modifiers para, void *p)
