@@ -12,6 +12,36 @@
 
 #include "ft_printf.h"
 
+static int	num_len(t_modifiers para, long long num)
+{
+	if (para.read_as == 'l')
+	{
+		if (para.type == 'u')
+			return (ft_ulonglen(num));
+		else
+			return (ft_longlen(num));
+	}
+	if (para.type == 'u')
+		return (ft_uintlen(num));
+	return (ft_intlen(num));
+}
+
+static void	nomtoa_to(t_modifiers para, long long i, char *to)
+{
+	if (para.read_as == 'l')
+	{
+		if (para.type == 'u')
+			ft_ultoa_to(i, to);
+		else
+			ft_ltoa_to(i, to);
+	}
+	else
+		if (para.type == 'u')
+			ft_uitoa_to(i, to);
+		else
+			ft_itoa_to(i, to);
+}
+
 static int	final_str_len(t_modifiers para, char *s)
 {
 	int len;
@@ -25,7 +55,7 @@ static int	final_str_len(t_modifiers para, char *s)
 	return (ft_max(para.min_width, len));
 }
 
-static int	prec_int_len(t_modifiers para, int i)
+static int	prec_num_len(t_modifiers para, long long i)
 {
 	int prec;
 
@@ -36,7 +66,7 @@ static int	prec_int_len(t_modifiers para, int i)
 		if (i < 0)
 			prec++;
 	}
-	return (ft_max(ft_intlen(i), prec));
+	return (ft_max(num_len(para, i), prec));
 }
 
 static int	char_type(t_modifiers para, char c)
@@ -72,12 +102,12 @@ static int	string_type(t_modifiers para, char *s)
 	return (write(1, str, len));
 }
 
-static int	int_type(t_modifiers para, int i)
+static int	num_type(t_modifiers para, long long i)
 {
 	int		len;
 	int		shift;
-	char	i_str[ft_intlen(i)];
-	char	str[prec_int_len(para, i) + 1];
+	char	i_str[num_len(para, i)];
+	char	str[prec_num_len(para, i) + 1];
 
 	shift = i < 0 && (para.flags.zero) && !para.has_prec;
 	if (para.has_prec && !para.prec && i == 0)
@@ -88,7 +118,7 @@ static int	int_type(t_modifiers para, int i)
 	len = sizeof(str) - 1;
 	str[len] = 0;
 	ft_memset(&str, ft_ternary(para.has_prec, '0', ' '), len);
-	ft_itoa_to(i, i_str);
+	nomtoa_to(para, i, i_str);
 	ft_strinsert(str, i_str + (i < 0), ft_ternary(
 		para.prec < 0, (i < 0), len - sizeof(i_str) + (i < 0)));
 	if (para.has_prec)
@@ -111,13 +141,13 @@ static int	pointer_type(t_modifiers para, void *p)
 	int				str_i;
 	char			c;
 	char			str[20];
-	uint64_t		addr;
+	unsigned long	addr;
 
 	if (!p)
 		return (string_type(para, "0x0"));
 	i = 1;
 	str_i = 2;
-	addr = (uint64_t)p;
+	addr = (unsigned long)p;
 	ft_strlcpy(str, "0x", 3);
 	while (i <= 16 && !((addr >> 4 * (16 - i)) % 16))
 		i++;
@@ -140,7 +170,7 @@ int			ft_applyer(t_modifiers para, va_list args)
 		return (string_type(para, va_arg(args, char*)));
 	else if (para.type == 'p')
 		return (pointer_type(para, va_arg(args, void*)));
-	else if (para.type == 'd' || para.type == 'i')
-		return (int_type(para, va_arg(args, int)));
+	else if (para.type == 'd' || para.type == 'i' || para.type == 'u')
+		return (num_type(para, va_arg(args, int)));
 	return (0);
 }
