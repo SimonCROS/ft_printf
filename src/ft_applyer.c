@@ -6,7 +6,7 @@
 /*   By: scros <scros@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/13 15:14:52 by scros             #+#    #+#             */
-/*   Updated: 2020/12/16 12:30:36 by scros            ###   ########lyon.fr   */
+/*   Updated: 2020/12/18 11:04:00 by scros            ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,20 +26,18 @@ static int	num_len(t_modifiers para, long long num)
 	return (ft_intlen(num));
 }
 
-static void	nomtoa_to(t_modifiers para, long long i, char *to)
+static char	*nomtoa_to(t_modifiers para, long long i, char *to)
 {
 	if (para.read_as == 'l')
 	{
 		if (para.type == 'u')
-			ft_ultoa_to(i, to);
+			return (ft_ultoa_to(i, to));
 		else
-			ft_ltoa_to(i, to);
+			return (ft_ltoa_to(i, to));
 	}
-	else
-		if (para.type == 'u')
-			ft_uitoa_to(i, to);
-		else
-			ft_itoa_to(i, to);
+	if (para.type == 'u')
+		return (ft_uitoa_to(i, to));
+	return (ft_itoa_to(i, to));
 }
 
 static int	final_str_len(t_modifiers para, char *s)
@@ -63,7 +61,7 @@ static int	prec_num_len(t_modifiers para, long long i)
 	if (para.has_prec)
 	{
 		prec = ft_abs(para.prec);
-		if (i < 0)
+		if (i < 0 && para.type != 'u')
 			prec++;
 	}
 	return (ft_max(num_len(para, i), prec));
@@ -106,31 +104,26 @@ static int	num_type(t_modifiers para, long long i)
 {
 	int		len;
 	int		shift;
+	int		negative;
 	char	i_str[num_len(para, i)];
 	char	str[prec_num_len(para, i) + 1];
 
-	shift = i < 0 && (para.flags.zero) && !para.has_prec;
-	if (para.has_prec && !para.prec && i == 0)
-	{
-		para.flags.zero = 0;
-		return (string_type(para, "") + shift);
-	}
+	negative = para.type != 'u' && i < 0;
+	shift = negative && (para.flags.zero) && !para.has_prec;
+	if (para.has_prec && !para.prec && i == 0 && !(para.flags.zero = 0))
+		return (string_type(para, ""));
 	len = sizeof(str) - 1;
 	str[len] = 0;
 	ft_memset(&str, ft_ternary(para.has_prec, '0', ' '), len);
-	nomtoa_to(para, i, i_str);
-	ft_strinsert(str, i_str + (i < 0), ft_ternary(
-		para.prec < 0, (i < 0), len - sizeof(i_str) + (i < 0)));
+	ft_strinsert(str, nomtoa_to(para, i, i_str) + negative, ft_ternary(
+		para.prec < 0, negative, len - sizeof(i_str) + negative));
 	if (para.has_prec)
 		para.flags.zero = 0;
 	para.has_prec = 0;
 	if (shift)
-	{
-		write(1, "-", 1);
-		if (para.min_width)
+		if (write(1, "-", 1) && para.min_width)
 			para.min_width--;
-	}
-	else if (i < 0)
+	if (!shift && negative)
 		str[0] = '-';
 	return (string_type(para, str + shift) + shift);
 }
