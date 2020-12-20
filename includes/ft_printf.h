@@ -6,7 +6,7 @@
 /*   By: scros <scros@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/23 11:06:43 by scros             #+#    #+#             */
-/*   Updated: 2020/12/15 13:31:02 by scros            ###   ########lyon.fr   */
+/*   Updated: 2020/12/18 17:22:03 by scros            ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,5 @@ typedef struct	s_modifiers
 int				ft_applyer(t_modifiers modifiers, va_list args);
 int				ft_printf(const char *format, ...) \
 	__attribute__((format(printf,1,2)));
-int				ft_parser(char **string, va_list args);
 
 #endif

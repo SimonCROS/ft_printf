@@ -6,37 +6,135 @@
 /*   By: scros <scros@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/13 15:14:52 by scros             #+#    #+#             */
-/*   Updated: 2020/12/18 11:04:00 by scros            ###   ########lyon.fr   */
+/*   Updated: 2020/12/20 16:13:24 by scros            ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_printf.h"
 
+static int	is_neg(t_modifiers para, long long num)
+{
+	if (ft_strindex_of("id", para.type) == -1)
+		return (0);
+	if (para.read_as == 'l' + 1)
+		return (num < 0);
+	if (para.read_as == 'l')
+		return ((long)num < 0);
+	if (para.read_as == 'h')
+		return ((short)num < 0);
+	if (para.read_as == 'h' + 1)
+		return ((char)num < 0);
+	return ((int)num < 0);
+}
+
+static char	get_sign(t_modifiers para, long long i)
+{
+	if (is_neg(para, i))
+		return ('-');
+	if (para.flags.sign)
+		return ('+');
+	if (para.flags.space)
+		return (' ');
+	return (0);
+}
+
 static int	num_len(t_modifiers para, long long num)
 {
+	if (para.read_as == 'l' + 1)
+	{
+		if (para.type == 'u')
+			return (ft_ulonglonglen(num));
+		else if (para.type == 'x' || para.type == 'X')
+			return (ft_longlonglen_hex(num));
+		else
+			return (ft_longlonglen(num));
+	}
 	if (para.read_as == 'l')
 	{
 		if (para.type == 'u')
 			return (ft_ulonglen(num));
+		else if (para.type == 'x' || para.type == 'X')
+			return (ft_longlen_hex(num));
 		else
 			return (ft_longlen(num));
 	}
+	if (para.read_as == 'h')
+	{
+		if (para.type == 'u')
+			return (ft_ushortlen(num));
+		else if (para.type == 'x' || para.type == 'X')
+			return (ft_shortlen_hex(num));
+		else
+			return (ft_shortlen(num));
+	}
+	if (para.read_as == 'h' + 1)
+	{
+		if (para.type == 'u')
+			return (ft_ucharlen(num));
+		else if (para.type == 'x' || para.type == 'X')
+			return (ft_charlen_hex(num));
+		else
+			return (ft_charlen(num));
+	}
 	if (para.type == 'u')
 		return (ft_uintlen(num));
+	else if (para.type == 'x' || para.type == 'X')
+		return (ft_intlen_hex(num));
 	return (ft_intlen(num));
 }
 
 static char	*nomtoa_to(t_modifiers para, long long i, char *to)
 {
+	if (para.read_as == 'l' + 1)
+	{
+		if (para.type == 'u')
+			return (ft_ulltoa_to(i, to));
+		else if (para.type == 'x')
+			return (ft_lltohex_to(i, to));
+		else if (para.type == 'X')
+			return (ft_strtoupper(ft_lltohex_to(i, to)));
+		else
+			return (ft_lltoa_to(i, to));
+	}
 	if (para.read_as == 'l')
 	{
 		if (para.type == 'u')
 			return (ft_ultoa_to(i, to));
+		else if (para.type == 'x')
+			return (ft_ltohex_to(i, to));
+		else if (para.type == 'X')
+			return (ft_strtoupper(ft_ltohex_to(i, to)));
 		else
 			return (ft_ltoa_to(i, to));
 	}
+	if (para.read_as == 'h')
+	{
+		if (para.type == 'u')
+			return (ft_ustoa_to(i, to));
+		else if (para.type == 'x')
+			return (ft_stohex_to(i, to));
+		else if (para.type == 'X')
+			return (ft_strtoupper(ft_stohex_to(i, to)));
+		else
+			return (ft_stoa_to(i, to));
+	}
+	if (para.read_as == 'h' + 1)
+	{
+		if (para.type == 'u')
+			return (ft_uctoa_to(i, to));
+		else if (para.type == 'x')
+			return (ft_ctohex_to(i, to));
+		else if (para.type == 'X')
+			return (ft_strtoupper(ft_ctohex_to(i, to)));
+		else
+			return (ft_ctoa_to(i, to));
+	}
 	if (para.type == 'u')
 		return (ft_uitoa_to(i, to));
+	else if (para.type == 'x')
+		return (ft_itohex_to(i, to));
+	else if (para.type == 'X')
+		return (ft_strtoupper(ft_itohex_to(i, to)));
 	return (ft_itoa_to(i, to));
 }
 
@@ -61,7 +159,7 @@ static int	prec_num_len(t_modifiers para, long long i)
 	if (para.has_prec)
 	{
 		prec = ft_abs(para.prec);
-		if (i < 0 && para.type != 'u')
+		if (get_sign(para, i) && para.type != 'u')
 			prec++;
 	}
 	return (ft_max(num_len(para, i), prec));
@@ -69,27 +167,35 @@ static int	prec_num_len(t_modifiers para, long long i)
 
 static int	char_type(t_modifiers para, char c)
 {
-	char str[ft_max(1, para.min_width)];
+	char	*str;
+	int		ret;
 
-	ft_memset(&str, ft_ternary(para.flags.left_align, ' ',
+	if (!(str = malloc(ft_max(1, para.min_width))))
+		return (-1);
+	ft_memset(str, ft_ternary(para.flags.left_align, ' ',
 		ft_max(' ', para.flags.zero)), para.min_width);
 	str[ft_ternary(para.flags.left_align, 0,
 		ft_max(para.min_width - 1, 0))] = c;
-	return (write(1, str, ft_max(1, para.min_width)));
+	ret = write(1, str, ft_max(1, para.min_width));
+	free(str);
+	return (ret);
 }
 
 static int	string_type(t_modifiers para, char *s)
 {
+	int		ret;
 	int		len;
 	int		from;
 	int		s_len;
-	char	str[final_str_len(para, s)];
+	char	*str;
 
+	len = final_str_len(para, s);
+	if (!(str = malloc(len)))
+		return (-1);
 	if (!s)
 		return (string_type(para, "(null)"));
-	len = sizeof(str);
 	s_len = ft_strlen(s);
-	ft_memset(&str, ft_ternary(para.flags.left_align, ' ',
+	ft_memset(str, ft_ternary(para.flags.left_align, ' ',
 		ft_max(' ', para.flags.zero)), len);
 	if (!para.has_prec || para.prec >= 0)
 	{
@@ -97,35 +203,48 @@ static int	string_type(t_modifiers para, char *s)
 		ft_strninsert(str, s, ft_ternary(para.flags.left_align, 0, len - from),
 			from);
 	}
-	return (write(1, str, len));
+	ret = write(1, str, len);
+	free(str);
+	return (ret);
 }
 
 static int	num_type(t_modifiers para, long long i)
 {
 	int		len;
+	int		ret;
 	int		shift;
-	int		negative;
-	char	i_str[num_len(para, i)];
-	char	str[prec_num_len(para, i) + 1];
+	char	sign;
+	char	*i_str;
+	char	*str;
 
-	negative = para.type != 'u' && i < 0;
-	shift = negative && (para.flags.zero) && !para.has_prec;
+	len = prec_num_len(para, i);
+	if (!(i_str = malloc(num_len(para, i))))
+		return (-1);
+	if (!(str = malloc(len + 1)))
+	{
+		free(i_str);
+		return (-1);
+	}
+	sign = get_sign(para, i);
+	shift = sign && para.flags.zero && !para.has_prec;
 	if (para.has_prec && !para.prec && i == 0 && !(para.flags.zero = 0))
 		return (string_type(para, ""));
-	len = sizeof(str) - 1;
 	str[len] = 0;
-	ft_memset(&str, ft_ternary(para.has_prec, '0', ' '), len);
-	ft_strinsert(str, nomtoa_to(para, i, i_str) + negative, ft_ternary(
-		para.prec < 0, negative, len - sizeof(i_str) + negative));
+	ft_memset(str, ft_ternary(para.has_prec, '0', ' '), len);
+	ft_strinsert(str, nomtoa_to(para, i, i_str) + (sign == '-'), ft_ternary(
+		para.prec < 0, sign == '-', len - num_len(para, i) + (sign == '-')));
 	if (para.has_prec)
 		para.flags.zero = 0;
 	para.has_prec = 0;
 	if (shift)
-		if (write(1, "-", 1) && para.min_width)
+		if (write(1, &sign, 1) && para.min_width)
 			para.min_width--;
-	if (!shift && negative)
-		str[0] = '-';
-	return (string_type(para, str + shift) + shift);
+	if (!shift && sign)
+		str[0] = sign;
+	ret = string_type(para, str + shift) + shift;
+	free(i_str);
+	free(str);
+	return (ret);
 }
 
 static int	pointer_type(t_modifiers para, void *p)
@@ -163,7 +282,8 @@ int			ft_applyer(t_modifiers para, va_list args)
 		return (string_type(para, va_arg(args, char*)));
 	else if (para.type == 'p')
 		return (pointer_type(para, va_arg(args, void*)));
-	else if (para.type == 'd' || para.type == 'i' || para.type == 'u')
-		return (num_type(para, va_arg(args, int)));
+	else if (para.type == 'd' || para.type == 'i' || para.type == 'u' ||
+		para.type == 'x' || para.type == 'X')
+		return (num_type(para, va_arg(args, long long)));
 	return (0);
 }
