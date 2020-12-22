@@ -6,7 +6,7 @@
 /*   By: scros <scros@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/12 10:49:43 by scros             #+#    #+#             */
-/*   Updated: 2020/12/18 17:23:49 by scros            ###   ########lyon.fr   */
+/*   Updated: 2020/12/21 13:48:21 by scros            ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,11 +45,11 @@ static int	ft_parser(char **string, va_list args)
 
 	ft_bzero(&para, sizeof(para));
 	read_flags(string, &(para.flags));
-	read_number(string, &(para.min_width), args);
-	if (para.min_width < 0)
+	read_number(string, &(para.min), args);
+	if (para.min < 0)
 	{
-		para.flags.left_align = '-';
-		para.min_width *= -1;
+		para.flags.left = '-';
+		para.min *= -1;
 	}
 	if (**string == '.' && *(++(*string)))
 		if (!read_number(string, &(para.prec), args) || para.prec >= 0)

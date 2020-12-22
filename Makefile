@@ -6,7 +6,7 @@
 #    By: scros <scros@student.42lyon.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2020/11/23 11:39:11 by scros             #+#    #+#              #
-#    Updated: 2020/12/14 17:11:36 by scros            ###   ########lyon.fr    #
+#    Updated: 2020/12/21 13:14:58 by scros            ###   ########lyon.fr    #
 #                                                                              #
 # **************************************************************************** #
 
@@ -27,7 +27,7 @@ LIBFT_FILE	= $(LIBFT)/libft.a
 CC			= gcc
 RM			= rm -f
 
-CFLAGS		= -Wall -Wextra -Werror 
+CFLAGS		= #-Wall -Wextra -Werror 
 
 HEADERS		=	$(addprefix $(INC)/, ft_printf.h)
 

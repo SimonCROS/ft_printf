@@ -6,7 +6,7 @@
 /*   By: scros <scros@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/23 11:06:43 by scros             #+#    #+#             */
-/*   Updated: 2020/12/18 17:22:03 by scros            ###   ########lyon.fr   */
+/*   Updated: 2020/12/21 13:48:01 by scros            ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@
 
 typedef struct	s_flags
 {
-	char		left_align;
+	char		left;
 	char		sign;
 	char		space;
 	char		hashtag;
@@ -28,7 +28,7 @@ typedef struct	s_flags
 typedef struct	s_modifiers
 {
 	t_flags		flags;
-	int			min_width;
+	int			min;
 	int			has_prec;
 	int			prec;
 	char		read_as;
