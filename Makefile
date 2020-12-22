@@ -6,7 +6,7 @@
 #    By: scros <scros@student.42lyon.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2020/11/23 11:39:11 by scros             #+#    #+#              #
-#    Updated: 2020/12/21 13:14:58 by scros            ###   ########lyon.fr    #
+#    Updated: 2020/12/22 13:32:15 by scros            ###   ########lyon.fr    #
 #                                                                              #
 # **************************************************************************** #
 
@@ -16,7 +16,8 @@ LIBFT		= libft
 INC			= includes
 
 SRCS		=	ft_applyer.c	\
-				ft_parser.c		\
+				ft_numtoa.c		\
+				ft_ints.c		\
 				ft_printf.c		\
 
 OBJS		= $(addprefix $(BIN)/, $(SRCS:.c=.o))
@@ -27,7 +28,7 @@ LIBFT_FILE	= $(LIBFT)/libft.a
 CC			= gcc
 RM			= rm -f
 
-CFLAGS		= #-Wall -Wextra -Werror 
+CFLAGS		= -Wall -Wextra -Werror 
 
 HEADERS		=	$(addprefix $(INC)/, ft_printf.h)
 

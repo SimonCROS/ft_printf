@@ -6,7 +6,7 @@
 /*   By: scros <scros@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/23 11:06:43 by scros             #+#    #+#             */
-/*   Updated: 2020/12/21 13:48:01 by scros            ###   ########lyon.fr   */
+/*   Updated: 2020/12/22 13:31:11 by scros            ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,13 @@ typedef struct	s_modifiers
 	char		type;
 }				t_modifiers;
 
+char			*numtoa_to(t_modifiers para, long long i, char *to);
+char			*get_sign(t_modifiers para, long long i);
+int				string_type(t_modifiers para, char *s);
 int				ft_applyer(t_modifiers modifiers, va_list args);
+int				num_len(t_modifiers para, long long num);
+int				num_type(t_modifiers para, long long i);
+int				is_neg(t_modifiers para, long long num);
 int				ft_printf(const char *format, ...) \
 	__attribute__((format(printf,1,2)));
 
