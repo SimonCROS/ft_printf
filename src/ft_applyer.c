@@ -6,7 +6,7 @@
 /*   By: scros <scros@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/13 15:14:52 by scros             #+#    #+#             */
-/*   Updated: 2020/12/22 11:05:29 by scros            ###   ########lyon.fr   */
+/*   Updated: 2020/12/22 11:08:21 by scros            ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -186,7 +186,7 @@ static int	char_type(t_modifiers para, char c)
 
 	if (!(str = malloc(ft_max(1, para.min))))
 		return (-1);
-	ft_memset(str, (' ' | para.flags.zero) * !!para.flags.left | ' ', para.min);
+	ft_memset(str, (' ' | para.flags.zero) * !para.flags.left | ' ', para.min);
 	str[!para.flags.left * ft_max(0, para.min - 1)] = c;
 	ret = write(1, str, ft_max(1, para.min));
 	free(str);
