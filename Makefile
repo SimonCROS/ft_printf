@@ -6,7 +6,7 @@
 #    By: scros <scros@student.42lyon.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2020/11/23 11:39:11 by scros             #+#    #+#              #
-#    Updated: 2020/12/22 14:59:34 by scros            ###   ########lyon.fr    #
+#    Updated: 2020/12/22 15:01:13 by scros            ###   ########lyon.fr    #
 #                                                                              #
 # **************************************************************************** #
 
@@ -44,6 +44,9 @@ compile_lib:
 			@$(MAKE) -C $(LIBFT)
 			@cp $(LIBFT_FILE) $(NAME)
 
+re_lib:
+			@$(MAKE) -C $(LIBFT) re
+
 clean_lib:
 			@$(MAKE) -C $(LIBFT) clean
 
@@ -62,4 +65,4 @@ fclean:		fclean_lib
 
 re:			fclean all
 
-.PHONY:		all clean fclean re compile_lib clean_lib fclean_lib
+.PHONY:		all clean fclean re compile_lib re_lib clean_lib fclean_lib
