@@ -6,7 +6,7 @@
 /*   By: scros <scros@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/13 15:14:52 by scros             #+#    #+#             */
-/*   Updated: 2020/12/22 11:13:53 by scros            ###   ########lyon.fr   */
+/*   Updated: 2020/12/22 11:27:46 by scros            ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -226,6 +226,11 @@ static int	num_type(t_modifiers para, long long i)
 	char	*prefix;
 	char	*str;
 
+	if (para.has_prec && para.flags.sign && !para.prec && !i)
+	{
+		para.has_prec = 0;
+		return (string_type(para, "+"));
+	}
 	if (para.has_prec && !para.prec && !i)
 		return (string_type(para, ""));
 	if (!i && (para.type == 'x' || para.type == 'X'))
