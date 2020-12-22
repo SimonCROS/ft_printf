@@ -6,7 +6,7 @@
 /*   By: scros <scros@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/13 15:14:52 by scros             #+#    #+#             */
-/*   Updated: 2020/12/21 18:31:23 by scros            ###   ########lyon.fr   */
+/*   Updated: 2020/12/22 11:05:29 by scros            ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,13 +48,12 @@ static int	num_len(t_modifiers para, long long num)
 	int add;
 	int prefix;
 
-	prefix = para.flags.hashtag && (para.has_prec || para.flags.zero);
 	if (para.read_as == 'l' + 1)
 	{
 		if (para.type == 'u')
 			len = ft_ulonglonglen(num);
 		else if (para.type == 'x' || para.type == 'X')
-			len = ft_longlonglen_hex(num, prefix, 0);
+			len = ft_longlonglen_hex(num, 0, 0);
 		else
 			len = ft_longlonglen(num);
 	}
@@ -63,7 +62,7 @@ static int	num_len(t_modifiers para, long long num)
 		if (para.type == 'u')
 			len = ft_ulonglen(num);
 		else if (para.type == 'x' || para.type == 'X')
-			len = ft_longlen_hex(num, prefix, 0);
+			len = ft_longlen_hex(num, 0, 0);
 		else
 			len = ft_longlen(num);
 	}
@@ -72,7 +71,7 @@ static int	num_len(t_modifiers para, long long num)
 		if (para.type == 'u')
 			len = ft_ushortlen(num);
 		else if (para.type == 'x' || para.type == 'X')
-			len = ft_shortlen_hex(num, prefix, 0);
+			len = ft_shortlen_hex(num, 0, 0);
 		else
 			len = ft_shortlen(num);
 	}
@@ -81,14 +80,14 @@ static int	num_len(t_modifiers para, long long num)
 		if (para.type == 'u')
 			len = ft_ucharlen(num);
 		else if (para.type == 'x' || para.type == 'X')
-			len = ft_charlen_hex(num, prefix, 0);
+			len = ft_charlen_hex(num, 0, 0);
 		else
 			len = ft_charlen(num);
 	}
 	else if (para.type == 'u')
 		len = ft_uintlen(num);
 	else if (para.type == 'x' || para.type == 'X')
-		len = ft_intlen_hex(num, prefix, 0);
+		len = ft_intlen_hex(num, 0, 0);
 	else
 		len = ft_intlen(num);
 	add = !is_neg(para, num) * ft_strlen(get_sign(para, num));
@@ -99,7 +98,7 @@ static char	*numtoa_to(t_modifiers para, long long i, char *to)
 {
 	int prefix;
 
-	prefix = para.flags.hashtag && (para.has_prec || para.flags.zero);
+	prefix = *get_sign(para, i) && !(!para.has_prec && para.flags.zero);
 	if (para.read_as == 'l' + 1)
 	{
 		if (para.type == 'u')
@@ -208,7 +207,7 @@ static int	string_type(t_modifiers para, char *s)
 	if (!(str = malloc(len)))
 		return (-1);
 	s_len = ft_strlen(s);
-	ft_memset(str, (' ' | para.flags.zero) * !!para.flags.left | ' ', len);
+	ft_memset(str, (' ' | para.flags.zero) * !para.flags.left | ' ', len);
 	if (!para.has_prec || para.prec >= 0)
 	{
 		from = ft_ternary(para.has_prec, ft_min(s_len, para.prec), s_len);
@@ -227,6 +226,8 @@ static int	num_type(t_modifiers para, long long i)
 	char	*prefix;
 	char	*str;
 
+	if (para.has_prec && !para.prec && !i)
+		return (string_type(para, ""));
 	ret = 0;
 	prefix = get_sign(para, i);
 	shift = ft_strlen(prefix) * (!para.has_prec && para.flags.zero);
@@ -239,10 +240,13 @@ static int	num_type(t_modifiers para, long long i)
 	if (shift)
 	{
 		ret += ft_putstr_fd(prefix, 1);
+		para.min = ft_max(para.min - ft_strlen(prefix), 0);
 	}
-	else
+	else if (*prefix || para.has_prec)
+	{
 		ft_strinsert(str, prefix, 0);
-	para.min = ft_max(para.min - ft_strlen(prefix), 0);
+		para.flags.zero = 0;
+	}
 	para.has_prec = 0;
 	ret += string_type(para, str + shift);
 	free(str);
