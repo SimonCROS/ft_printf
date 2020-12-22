@@ -6,7 +6,7 @@
 #    By: scros <scros@student.42lyon.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2020/11/23 11:39:11 by scros             #+#    #+#              #
-#    Updated: 2020/12/22 13:32:15 by scros            ###   ########lyon.fr    #
+#    Updated: 2020/12/22 14:59:34 by scros            ###   ########lyon.fr    #
 #                                                                              #
 # **************************************************************************** #
 
@@ -37,19 +37,29 @@ all:		$(NAME)
 $(BIN)/%.o:		$(SRC)/%.c $(HEADERS)
 			$(CC) $(CFLAGS) -c $< -Iincludes -Ilibft/includes -o $@
 
-$(NAME):	compile_libft $(OBJS)
+$(NAME):	compile_lib $(OBJS)
 			ar rc $(NAME) $(OBJS)
 
-compile_libft:
+compile_lib:
 			@$(MAKE) -C $(LIBFT)
 			@cp $(LIBFT_FILE) $(NAME)
 
-clean:
-			$(RM) $(OBJS)
+clean_lib:
+			@$(MAKE) -C $(LIBFT) clean
 
-fclean:		clean
-			$(RM) $(NAME)
+fclean_lib:
+			@$(MAKE) -C $(LIBFT) fclean
+
+clean:		clean_lib
+			@echo "Deleting objects...\n"
+			@$(RM) $(OBJS)
+
+fclean:		fclean_lib
+			@echo "Deleting objects...\n"
+			@$(RM) $(OBJS)
+			@echo "Deleting $(NAME)\n"
+			@$(RM) $(NAME)
 
 re:			fclean all
 
-.PHONY:		all clean fclean re
+.PHONY:		all clean fclean re compile_lib clean_lib fclean_lib
