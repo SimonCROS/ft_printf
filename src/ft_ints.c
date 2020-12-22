@@ -6,11 +6,26 @@
 /*   By: scros <scros@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/13 15:14:52 by scros             #+#    #+#             */
-/*   Updated: 2020/12/22 13:33:14 by scros            ###   ########lyon.fr   */
+/*   Updated: 2020/12/22 14:14:22 by scros            ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_printf.h"
+
+int			is_neg(t_modifiers para, long long num)
+{
+	if (ft_strindex_of("id", para.type) == -1)
+		return (0);
+	if (para.read_as == 'l' + 1)
+		return (num < 0);
+	if (para.read_as == 'l')
+		return ((long)num < 0);
+	if (para.read_as == 'h')
+		return ((short)num < 0);
+	if (para.read_as == 'h' + 1)
+		return ((char)num < 0);
+	return ((int)num < 0);
+}
 
 static int	prec_num_len(t_modifiers para, long long i)
 {
