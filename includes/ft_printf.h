@@ -6,7 +6,7 @@
 /*   By: scros <scros@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/23 11:06:43 by scros             #+#    #+#             */
-/*   Updated: 2020/12/22 14:42:49 by scros            ###   ########lyon.fr   */
+/*   Updated: 2020/12/22 14:45:45 by scros            ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,7 @@ int				ft_applyer(t_modifiers modifiers, va_list args);
 int				num_len(t_modifiers para, long long num);
 int				num_type(t_modifiers para, long long i);
 int				is_neg(t_modifiers para, long long num);
-int				ft_printf(const char *format, ...) \
-	__attribute__((format(printf,1,2)));
+int				ft_printf(const char *format,\
+				...) __attribute__((format(printf,1,2)));
 
 #endif
