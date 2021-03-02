@@ -6,7 +6,7 @@
 /*   By: scros <scros@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/13 15:14:52 by scros             #+#    #+#             */
-/*   Updated: 2020/12/22 14:04:17 by scros            ###   ########lyon.fr   */
+/*   Updated: 2021/03/02 09:59:22 by scros            ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ static int	char_type(t_modifiers para, char c)
 
 	if (!(str = malloc(ft_max(1, para.min))))
 		return (-1);
-	ft_memset(str, (' ' | para.flags.zero) * !para.flags.left | ' ', para.min);
+	ft_memset(str, para.flags.zero * !para.flags.left | ' ', para.min);
 	str[!para.flags.left * ft_max(0, para.min - 1)] = c;
 	ret = write(1, str, ft_max(1, para.min));
 	free(str);
@@ -53,7 +53,7 @@ int			string_type(t_modifiers para, char *s)
 	if (!(str = malloc(len)))
 		return (-1);
 	s_len = ft_strlen(s);
-	ft_memset(str, (' ' | para.flags.zero) * !para.flags.left | ' ', len);
+	ft_memset(str, para.flags.zero * !para.flags.left | ' ', len);
 	if (!para.has_prec || para.prec >= 0)
 	{
 		from = ft_ternary(para.has_prec, ft_min(s_len, para.prec), s_len);
