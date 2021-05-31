@@ -6,13 +6,13 @@
 /*   By: scros <scros@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/13 15:14:52 by scros             #+#    #+#             */
-/*   Updated: 2020/12/22 14:14:22 by scros            ###   ########lyon.fr   */
+/*   Updated: 2021/05/14 14:34:21 by scros            ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_printf.h"
 
-int			is_neg(t_modifiers para, long long num)
+int	is_neg(t_modifiers para, long long num)
 {
 	if (ft_strindex_of("id", para.type) == -1)
 		return (0);
@@ -29,7 +29,7 @@ int			is_neg(t_modifiers para, long long num)
 
 static int	prec_num_len(t_modifiers para, long long i)
 {
-	int prec;
+	int	prec;
 
 	prec = 0;
 	if (para.has_prec)
@@ -49,10 +49,10 @@ static int	num_comp(t_modifiers para, long long i, char *prefix, int len)
 
 	ret = 0;
 	shift = ft_strlen(prefix) * (!para.has_prec && para.flags.zero);
-	if (!(str = malloc(len + 1)))
+	str = ft_calloc(1, len + 1);
+	if (!str)
 		return (-1);
 	ft_memset(str, '0', len);
-	str[len] = 0;
 	numtoa_to(para, i, str);
 	if (shift)
 	{
@@ -70,7 +70,7 @@ static int	num_comp(t_modifiers para, long long i, char *prefix, int len)
 	return (ret);
 }
 
-int			num_type(t_modifiers para, long long i)
+int	num_type(t_modifiers para, long long i)
 {
 	if (para.has_prec && para.flags.sign && !para.prec && !i)
 	{

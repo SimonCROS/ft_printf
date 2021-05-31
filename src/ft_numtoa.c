@@ -6,13 +6,13 @@
 /*   By: scros <scros@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/12 12:59:23 by scros             #+#    #+#             */
-/*   Updated: 2020/12/22 14:43:43 by scros            ###   ########lyon.fr   */
+/*   Updated: 2021/05/14 14:32:39 by scros            ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_printf.h"
 
-char		*get_sign(t_modifiers para, long long i)
+char	*get_sign(t_modifiers para, long long i)
 {
 	if (is_neg(para, i))
 		return ("-");
@@ -27,7 +27,7 @@ char		*get_sign(t_modifiers para, long long i)
 	return ("");
 }
 
-int			num_len_h(t_modifiers para, long long num)
+int	num_len_h(t_modifiers para, long long num)
 {
 	if (para.read_as == 'h')
 	{
@@ -54,10 +54,10 @@ int			num_len_h(t_modifiers para, long long num)
 	return (ft_intlen(num));
 }
 
-int			num_len(t_modifiers para, long long num)
+int	num_len(t_modifiers para, long long num)
 {
-	int len;
-	int add;
+	int	len;
+	int	add;
 
 	if (para.read_as == 'l' + 1)
 	{
@@ -111,7 +111,7 @@ static void	numtoa_to_h(t_modifiers para, long long i, char *to, int prefix)
 		ft_itoa_to(i, to);
 }
 
-void		numtoa_to(t_modifiers para, long long i, char *to)
+void	numtoa_to(t_modifiers para, long long i, char *to)
 {
 	int		prefix;
 

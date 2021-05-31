@@ -6,7 +6,7 @@
 /*   By: scros <scros@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/12 10:49:43 by scros             #+#    #+#             */
-/*   Updated: 2020/12/21 13:48:21 by scros            ###   ########lyon.fr   */
+/*   Updated: 2021/05/14 14:34:13 by scros            ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,10 +14,15 @@
 
 static void	read_flags(char **str, t_flags *flags)
 {
-	int pos;
+	int	pos;
 
-	while (**str && (pos = ft_strindex_of("-+ #0", **str)) != -1)
-		*((char*)flags + pos) = *((*str)++);
+	while (**str)
+	{
+		pos = ft_strindex_of("-+ #0", **str);
+		if (pos == -1)
+			break ;
+		*((char *)flags + pos) = *((*str)++);
+	}
 }
 
 static void	read_char(char **str, char *dest, char *possibilities)
@@ -28,9 +33,10 @@ static void	read_char(char **str, char *dest, char *possibilities)
 
 static int	read_number(char **str, int *dest, va_list args)
 {
-	int len;
+	int	len;
 
-	if (**str == '*' && (len = 1))
+	len = 1;
+	if (**str == '*')
 		*dest = va_arg(args, int);
 	else
 		*dest = ft_atoi_len(*str, &len);
@@ -40,7 +46,7 @@ static int	read_number(char **str, int *dest, va_list args)
 
 static int	ft_parser(char **string, va_list args)
 {
-	t_modifiers para;
+	t_modifiers	para;
 	char		second;
 
 	ft_bzero(&para, sizeof(para));
@@ -62,7 +68,7 @@ static int	ft_parser(char **string, va_list args)
 	return (ft_applyer(para, args));
 }
 
-int			ft_printf(const char *format, ...)
+int	ft_printf(const char *format, ...)
 {
 	va_list	argptr;
 	char	*from;
@@ -72,7 +78,8 @@ int			ft_printf(const char *format, ...)
 	length = 0;
 	from = (char *)format;
 	va_start(argptr, format);
-	while ((str = ft_strchr(from, '%')))
+	str = ft_strchr(from, '%');
+	while (str)
 	{
 		write(1, from, str - from);
 		length += str - from;

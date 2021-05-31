@@ -6,7 +6,7 @@
 /*   By: scros <scros@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/13 15:14:52 by scros             #+#    #+#             */
-/*   Updated: 2021/03/02 09:59:22 by scros            ###   ########lyon.fr   */
+/*   Updated: 2021/05/14 14:34:23 by scros            ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 static int	final_str_len(t_modifiers para, char *s)
 {
-	int len;
+	int	len;
 
 	if (!s)
 		return (0);
@@ -30,7 +30,8 @@ static int	char_type(t_modifiers para, char c)
 	char	*str;
 	int		ret;
 
-	if (!(str = malloc(ft_max(1, para.min))))
+	str = malloc(ft_max(1, para.min));
+	if (!str)
 		return (-1);
 	ft_memset(str, para.flags.zero * !para.flags.left | ' ', para.min);
 	str[!para.flags.left * ft_max(0, para.min - 1)] = c;
@@ -39,7 +40,7 @@ static int	char_type(t_modifiers para, char c)
 	return (ret);
 }
 
-int			string_type(t_modifiers para, char *s)
+int	string_type(t_modifiers para, char *s)
 {
 	int		ret;
 	int		len;
@@ -50,7 +51,8 @@ int			string_type(t_modifiers para, char *s)
 	if (!s)
 		return (string_type(para, "(null)"));
 	len = final_str_len(para, s);
-	if (!(str = malloc(len)))
+	str = malloc(len);
+	if (!str)
 		return (-1);
 	s_len = ft_strlen(s);
 	ft_memset(str, para.flags.zero * !para.flags.left | ' ', len);
@@ -89,18 +91,18 @@ static int	pointer_type(t_modifiers para, void *p)
 	return (string_type(para, str));
 }
 
-int			ft_applyer(t_modifiers para, va_list args)
+int	ft_applyer(t_modifiers para, va_list args)
 {
 	if (para.type == 'c')
 		return (char_type(para, va_arg(args, int)));
 	else if (para.type == '%')
 		return (char_type(para, '%'));
 	else if (para.type == 's')
-		return (string_type(para, va_arg(args, char*)));
+		return (string_type(para, va_arg(args, char *)));
 	else if (para.type == 'p')
-		return (pointer_type(para, va_arg(args, void*)));
-	else if (para.type == 'd' || para.type == 'i' || para.type == 'u' ||
-		para.type == 'x' || para.type == 'X')
+		return (pointer_type(para, va_arg(args, void *)));
+	else if (para.type == 'd' || para.type == 'i' || para.type == 'u'
+		|| para.type == 'x' || para.type == 'X')
 		return (num_type(para, va_arg(args, long long)));
 	return (0);
 }
