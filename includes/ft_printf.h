@@ -16,16 +16,16 @@
 # include <stdarg.h>
 # include "libft.h"
 
-typedef struct	s_flags
+typedef struct s_flags
 {
 	char		left;
 	char		sign;
 	char		space;
 	char		hashtag;
 	char		zero;
-}				t_flags;
+}	t_flags;
 
-typedef struct	s_modifiers
+typedef struct s_modifiers
 {
 	t_flags		flags;
 	int			min;
@@ -33,16 +33,16 @@ typedef struct	s_modifiers
 	int			prec;
 	char		read_as;
 	char		type;
-}				t_modifiers;
+}	t_modifiers;
 
-void			numtoa_to(t_modifiers para, long long i, char *to);
-char			*get_sign(t_modifiers para, long long i);
-int				string_type(t_modifiers para, char *s);
-int				ft_applyer(t_modifiers modifiers, va_list args);
-int				num_len(t_modifiers para, long long num);
-int				num_type(t_modifiers para, long long i);
-int				is_neg(t_modifiers para, long long num);
-int				ft_printf(const char *format,\
-				...) __attribute__((format(printf,1,2)));
+void	numtoa_to(t_modifiers para, long long i, char *to);
+char	*get_sign(t_modifiers para, long long i);
+int		string_type(t_modifiers para, char *s);
+int		ft_applyer(t_modifiers modifiers, va_list args);
+int		num_len(t_modifiers para, long long num);
+int		num_type(t_modifiers para, long long i);
+int		is_neg(t_modifiers para, long long num);
+int		ft_printf(const char *format, ...)\
+			__attribute__((format(printf, 1, 2)));
 
 #endif

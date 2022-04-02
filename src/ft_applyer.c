@@ -85,7 +85,10 @@ static int	pointer_type(t_modifiers para, void *p)
 	while (i <= 16)
 	{
 		c = (addr >> 4 * (16 - i++)) % 16;
-		str[str_i++] = (c > 9) ? 'a' + c - 10 : '0' + c;
+		if (c > 9)
+			str[str_i++] = 'a' + c - 10;
+		else
+			str[str_i++] = '0' + c;
 	}
 	str[str_i] = 0;
 	return (string_type(para, str));

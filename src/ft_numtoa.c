@@ -113,9 +113,9 @@ static void	numtoa_to_h(t_modifiers para, long long i, char *to, int prefix)
 
 void	numtoa_to(t_modifiers para, long long i, char *to)
 {
-	int		prefix;
+	int	prefix;
 
-	prefix = *get_sign(para, i) && !(!para.has_prec && para.flags.zero);
+	prefix = (*get_sign(para, i) && !(!para.has_prec && para.flags.zero));
 	if (para.read_as == 'l' + 1)
 	{
 		if (para.type == 'u')
